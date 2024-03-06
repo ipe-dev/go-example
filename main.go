@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-	user := user.NewUser("taro", 20)
-	user.petName = "goro"
+	user := user.New("taro", 20, user.WithPetName("tom"))
 	fmt.Println(*user)
 }
