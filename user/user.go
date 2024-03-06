@@ -1,14 +1,13 @@
 package user
 
 type User struct {
-	Name string
-	Age int
-	PetName string // ペットを飼っている人だけ追加したい
+	name string
+	age  int
 }
 
-func New(name string, age int ) *User {
+func NewUser(name string, age int) *User {
 	return &User{
-		Name: name,
-		Age: age,
+		name: name,
+		age:  age,
 	}
 }

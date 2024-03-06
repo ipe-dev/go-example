@@ -1,5 +1,12 @@
 package main
 
+import (
+	"fmt"
+	"go-example/user"
+)
+
 func main() {
-	user := New("taro", 20)
+	user := user.NewUser("taro", 20)
+	user.petName = "goro"
+	fmt.Println(*user)
 }
