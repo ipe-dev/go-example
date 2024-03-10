@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-example/user"
+	user "go-example/functional_option_pattern"
 )
 
 func main() {
