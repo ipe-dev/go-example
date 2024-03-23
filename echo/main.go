@@ -8,13 +8,20 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+type PostRequest struct {
+	Name string `json:"name"`
+}
+
 func getHello(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"message": "get hello world"})
 }
 func postHello(c echo.Context) error {
-	name := c.FormValue("name")
-	fmt.Println(name)
-	return c.JSON(http.StatusOK, map[string]string{"response": fmt.Sprintf("%s hello world", name)})
+	r := new(PostRequest)
+	if err := c.Bind(r); err != nil {
+		return err
+	}
+	fmt.Println(r)
+	return c.JSON(http.StatusOK, map[string]string{"message": fmt.Sprintf("%s hello world", r.Name)})
 }
 
 func deleteHello(c echo.Context) error {
@@ -30,5 +37,5 @@ func main() {
 	e.GET("/getHello", getHello)
 	e.POST("/postHello", postHello)
 	e.DELETE("/deleteHello", deleteHello)
-	e.Start(":8090")
+	e.Logger.Fatal(e.Start(":8090"))
 }
