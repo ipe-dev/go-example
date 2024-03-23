@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -8,10 +9,12 @@ import (
 )
 
 func getHello(c echo.Context) error {
-	return c.String(http.StatusOK, "get Hello World")
+	return c.JSON(http.StatusOK, map[string]string{"message": "get hello world"})
 }
 func postHello(c echo.Context) error {
-	return c.String(http.StatusOK, "post Hello World")
+	name := c.FormValue("name")
+	fmt.Println(name)
+	return c.JSON(http.StatusOK, map[string]string{"response": fmt.Sprintf("%s hello world", name)})
 }
 
 func deleteHello(c echo.Context) error {
@@ -21,7 +24,7 @@ func main() {
 	e := echo.New()
 	// e.Use(middleware.CORS())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8090"},
+		AllowOrigins: []string{"http://localhost:3000"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 	e.GET("/getHello", getHello)
