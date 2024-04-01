@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type PostRequest struct {
@@ -12,6 +13,7 @@ type PostRequest struct {
 }
 
 func postHello(c echo.Context) error {
+	fmt.Println("hoge")
 	r := new(PostRequest)
 	if err := c.Bind(r); err != nil {
 		return err
@@ -20,7 +22,14 @@ func postHello(c echo.Context) error {
 }
 func main() {
 	e := echo.New()
-	
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowCredentials: true,
+	}))
+	// e.Use(middleware.CSRF())
+	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
+		TokenLookup: "header:X-XSRF-TOKEN",
+	}))
 	e.POST("/hello", postHello)
 	e.Logger.Fatal(e.Start(":8080"))
 }
