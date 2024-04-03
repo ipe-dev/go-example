@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	  "github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -10,9 +13,14 @@ import (
 type PostRequest struct {
 	Name string `json:"name"`
 }
-
+type Session struct {
+	csrfToken string
+}
 func postHello(c echo.Context) error {
-	if err := c.Ech; err != nil {
+	token := c.Get("session").(*Session)
+	requestToken := c.Request().Header.Get("X-XSRF-TOKEN")
+	fmt.Println(requestToken)
+	if token.csrfToken != requestToken {
 		return echo.ErrForbidden
 	}
 	r := new(PostRequest)
@@ -23,7 +31,9 @@ func postHello(c echo.Context) error {
 }
 func csrfToken(c echo.Context) error {
 	token := c.Get("csrf")
-	fmt.Println(token)
+	sess, _ := session.Get("session", c)
+	sess.Values["csrfToken"] = token
+	sess.Save(c.Request(), c.Response())
 	return c.JSON(http.StatusOK, map[string]string{"token": token.(string)})
 }
 func main() {
@@ -32,7 +42,7 @@ func main() {
 		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowCredentials: true,
 	}))
-
+	e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
 		TokenLookup: "header:X-XSRF-TOKEN",
 	}))
